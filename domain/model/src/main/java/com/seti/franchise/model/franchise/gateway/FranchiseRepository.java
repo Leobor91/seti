@@ -10,4 +10,5 @@ public interface FranchiseRepository {
     Mono<Franchise> findById(String id);
     Flux<Franchise> findAll();
     Mono<Franchise> updateName(String id, String newName);
+    Mono<Franchise> findByName(String name);
 }

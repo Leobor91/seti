@@ -6,6 +6,8 @@ repositories {
 }
 
 dependencies {
+	implementation project( ':rest-consumer')
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	testImplementation 'com.tngtech.archunit:archunit:1.2.1'
 	testImplementation 'tools.jackson.core:jackson-databind'
 	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
