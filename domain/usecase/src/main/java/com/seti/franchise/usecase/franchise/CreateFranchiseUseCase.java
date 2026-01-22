@@ -17,6 +17,7 @@ public class CreateFranchiseUseCase {
     private final FranchiseRepository franchiseRepository;
 
     public Mono<Franchise> execute(String franchiseName) {
+        log.info("Starting creation process for franchise: " + franchiseName);
         return validate(franchiseName)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(
@@ -38,6 +39,7 @@ public class CreateFranchiseUseCase {
 
     private Mono<Boolean> validate(String franchiseName) {
         boolean isValid = Objects.nonNull(franchiseName) && !franchiseName.isBlank();
+        log.info("Validation result: " + isValid);
         return Mono.just(isValid);
     }
 }

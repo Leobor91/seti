@@ -35,28 +35,28 @@ public class FranchiseHandler {
     private final UpdateFranchiseNameUseCase updateFranchiseNameUseCase;
 
     @PostMapping(path = "/create")
-    public Mono<ResponseEntity<ApiResponseDto>> create(@Valid @RequestBody FranchiseRequest requestBody) {
+    public Mono<ResponseEntity<ApiResponseDto>> createFranchise(@Valid @RequestBody FranchiseRequest requestBody) {
         log.info("Request body = {}", requestBody);
         return createFranchiseUseCase.execute(requestBody.getName())
                 .doOnNext(franchise -> log.info("Franchise created: {}", franchise))
                 .map(franchise ->  ResponseEntity
                         .status(HttpStatus.CREATED)
                         .body(ApiResponseDto.builder()
-                                .status(201)
+                                .status(HttpStatus.CREATED.value())
                                 .message("Franchise created successfully")
                                 .data(franchise)
                                 .build()));
     }
 
     @PutMapping(path = "/update")
-    public Mono<ResponseEntity<ApiResponseDto>> update(@Valid @RequestBody FranchiseRequest requestBody) {
-        log.info("Request body = {}", requestBody);
+    public Mono<ResponseEntity<ApiResponseDto>> updateFranchise(@Valid @RequestBody FranchiseRequest requestBody) {
+        log.info("Request to update franchise: {}", requestBody);
         return updateFranchiseNameUseCase.execute(requestBody.getId() ,requestBody.getName())
                 .doOnNext(franchise -> log.info("Franchise updated: {}", franchise))
                 .map(franchise ->  ResponseEntity
-                        .status(HttpStatus.CREATED)
+                        .status(HttpStatus.OK)
                         .body(ApiResponseDto.builder()
-                                .status(201)
+                                .status(HttpStatus.OK.value())
                                 .message("Franchise updated successfully")
                                 .data(franchise)
                                 .build()));

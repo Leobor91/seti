@@ -1,6 +1,7 @@
 package com.seti.franchise.usecase.franchise;
 
 import com.seti.franchise.model.excepcion.DuplicateValueException;
+import com.seti.franchise.model.excepcion.NotFoundException;
 import com.seti.franchise.model.franchise.Franchise;
 import com.seti.franchise.model.franchise.gateway.FranchiseRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class UpdateFranchiseNameUseCase {
     private final FranchiseRepository franchiseRepository;
 
     public Mono<Franchise> execute(String franchiseId, String newName) {
+        log.info("Starting update process for franchise: " + franchiseId + ", newName: " + newName);
         return validate(newName, franchiseId)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(
@@ -32,7 +34,7 @@ public class UpdateFranchiseNameUseCase {
                     return Mono.just(Boolean.TRUE);
                 }))
                 .flatMap(value -> franchiseRepository.findById(franchiseId))
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Franchise not found with ID: " + franchiseId)))
+                .switchIfEmpty(Mono.error(new NotFoundException("Franchise not found with ID: " + franchiseId)))
                 .flatMap(franchise -> franchiseRepository.updateName(franchiseId, newName))
                 .doOnSuccess(updatedFranchise ->
                         log.info("Franchise name updated successfully to: " + updatedFranchise.getName())
@@ -44,6 +46,7 @@ public class UpdateFranchiseNameUseCase {
     private Mono<Boolean> validate(String franchiseName, String franchiseId) {
         boolean isValid = Objects.nonNull(franchiseName) && !franchiseName.isBlank() &&
                 Objects.nonNull(franchiseId) && !franchiseId.isBlank();
+        log.info("Validation result: " + isValid);
         return Mono.just(isValid);
     }
 }

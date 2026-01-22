@@ -35,4 +35,32 @@ public class productMongoRepositoryAdapter extends AdapterOperations<Product, Pr
                                 .build()))
                 .map(this::toEntity);
     }
+
+    @Override
+    public Mono<Product> findByName(String name) {
+        return this.repository.findByName(name)
+                .map(this::toEntity);
+    }
+
+    @Override
+    public Mono<Product> save(Product product) {
+        return this.repository.save(toData(product))
+                .map(this::toEntity);
+    }
+
+    @Override
+    protected ProductDocument toData(Product model) {
+        return ProductDocument.builder()
+                .id(model.getId())
+                .name(model.getName())
+                .build();
+    }
+
+    @Override
+    protected Product toEntity(ProductDocument document) {
+        return Product.builder()
+                .id(document.getId())
+                .name(document.getName())
+                .build();
+    }
 }

@@ -1,6 +1,7 @@
 package com.seti.franchise.restconsumer.excepcion;
 
 import com.seti.franchise.model.excepcion.DuplicateValueException;
+import com.seti.franchise.model.excepcion.NotFoundException;
 import com.seti.franchise.restconsumer.dto.response.ApiResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,17 @@ public class GlobalErrorHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponseDto.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
+                        .message(ex.getMessage())
+                        .data(null)
+                        .build()));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public Mono<ResponseEntity<ApiResponseDto>> handleDuplicateKey(NotFoundException ex) {
+        return Mono.just(ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseDto.builder()
+                        .status(HttpStatus.NOT_FOUND.value())
                         .message(ex.getMessage())
                         .data(null)
                         .build()));

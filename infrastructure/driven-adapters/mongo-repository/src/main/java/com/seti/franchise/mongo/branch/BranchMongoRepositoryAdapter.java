@@ -2,7 +2,6 @@ package com.seti.franchise.mongo.branch;
 
 import com.seti.franchise.model.branch.Branch;
 import com.seti.franchise.model.branch.gateway.BranchRepository;
-import com.seti.franchise.model.product.gateway.ProductRepository;
 import com.seti.franchise.mongo.helper.AdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -33,5 +32,33 @@ public class BranchMongoRepositoryAdapter extends AdapterOperations<Branch, Bran
                                 .name(newName)
                                 .build()))
                 .map(this::toEntity);
+    }
+
+    @Override
+    public Mono<Branch> findByName(String name) {
+        return this.repository.findByName(name)
+                .map(this::toEntity);
+    }
+
+    @Override
+    public Mono<Branch> save(Branch branch) {
+        return this.repository.save(toData(branch))
+                .map(this::toEntity);
+    }
+
+    @Override
+    protected BranchDocument toData(Branch model) {
+        return BranchDocument.builder()
+                .id(model.getId())
+                .name(model.getName())
+                .build();
+    }
+
+    @Override
+    protected Branch toEntity(BranchDocument document) {
+        return Branch.builder()
+                .id(document.getId())
+                .name(document.getName())
+                .build();
     }
 }
