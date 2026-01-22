@@ -19,12 +19,6 @@ public class BranchMongoRepositoryAdapter extends AdapterOperations<Branch, Bran
     }
 
     @Override
-    public Flux<Branch> findByFranchiseId(String franchiseId) {
-        return this.repository.findByFranchiseId(franchiseId)
-                .map(this::toEntity);
-    }
-
-    @Override
     public Mono<Branch> updateName(String id, String newName) {
         return this.repository.findById(id)
                 .flatMap(branchDocument  ->

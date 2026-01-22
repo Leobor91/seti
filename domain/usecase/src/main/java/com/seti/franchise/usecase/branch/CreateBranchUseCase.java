@@ -3,7 +3,6 @@ package com.seti.franchise.usecase.branch;
 import com.seti.franchise.model.branch.Branch;
 import com.seti.franchise.model.branch.gateway.BranchRepository;
 import com.seti.franchise.model.excepcion.DuplicateValueException;
-import com.seti.franchise.model.franchise.Franchise;
 import com.seti.franchise.model.franchise.gateway.FranchiseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;

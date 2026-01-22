@@ -23,7 +23,7 @@ public class UpdateBranchNameUseCase {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Branch ID and new name must be provided and non-blank.")))
                 .flatMap(isValid -> branchRepository.findByName(newName))
                 .flatMap(existingBranch -> existingBranch.getId().equalsIgnoreCase(branchId)
-                ? Mono.error(new IllegalArgumentException("The new name already belongs to the current branch " ))
+                        ? Mono.error(new IllegalArgumentException("The new name already belongs to the current branch "))
                         : Mono.error(new DuplicateValueException("A branch with the name '" + newName + "' already exists.")))
                 .switchIfEmpty(Mono.defer(() -> {
                     log.info("Name available for update");
