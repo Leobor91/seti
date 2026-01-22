@@ -1,10 +1,10 @@
-package com.seti.franchise.restconsumer.handler;
+package com.seti.franchise.restconsumer.handler.product;
 
 import com.seti.franchise.restconsumer.dto.request.ProductRequest;
 import com.seti.franchise.restconsumer.dto.response.ApiResponseDto;
-import com.seti.franchise.usecase.branch.UpdateBranchNameUseCase;
 import com.seti.franchise.usecase.product.CreateProductUseCase;
 import com.seti.franchise.usecase.product.DeleteProductUseCase;
+import com.seti.franchise.usecase.product.GetTopStockByFranchiseUseCase;
 import com.seti.franchise.usecase.product.UpdateProductNameUseCase;
 import com.seti.franchise.usecase.product.UpdateProductStockUseCase;
 import jakarta.validation.Valid;
@@ -14,10 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -32,6 +34,7 @@ public class ProductHandler {
     private final UpdateProductNameUseCase updateProductNameUseCase;
     private final UpdateProductStockUseCase updateProductStockUseCase;
     private final DeleteProductUseCase deleteProductUseCase;
+    private final GetTopStockByFranchiseUseCase getTopStockByFranchiseUseCase;
 
     @PostMapping(path = "/create")
     public Mono<ResponseEntity<ApiResponseDto>> createProduct(@Valid @RequestBody ProductRequest requestBody) {
@@ -76,16 +79,31 @@ public class ProductHandler {
     }
 
     @DeleteMapping(path = "/delete")
-    public Mono<ResponseEntity<ApiResponseDto>> deleteProduct(@Valid @RequestBody ProductRequest requestBody) {
-        log.info("Request to delete product received: {}", requestBody);
-        return deleteProductUseCase.execute(requestBody.getId())
-                .doOnSuccess(unused -> log.info("Product deleted with id: {}", requestBody.getId()))
-                .map(unused -> ResponseEntity
+    public Mono<ResponseEntity<ApiResponseDto>> deleteProduct(@RequestParam("productId") String productId) {
+        log.info("Request to delete product received: {}", productId);
+        return deleteProductUseCase.execute(productId)
+                .doOnSuccess(productDelete -> log.info("Product deleted with id: {}", productId))
+                .map(productDelete -> ResponseEntity
                         .status(HttpStatus.OK)
                         .body(ApiResponseDto.builder()
                                 .status(HttpStatus.OK.value())
                                 .message("Product deleted successfully")
-                                .data(null)
+                                .data(productDelete)
+                                .build()));
+    }
+
+    @GetMapping(path = "/top-stock-products")
+    public Mono<ResponseEntity<ApiResponseDto>> getTopStockProducts(@RequestParam("franchiseId") String franchiseId)  {
+        log.info("Request to get top stock products received");
+        return getTopStockByFranchiseUseCase.execute(franchiseId)
+                .collectList()
+                .doOnNext(products -> log.info("Top stock products retrieved: {}", products))
+                .map(products -> ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(ApiResponseDto.builder()
+                                .status(HttpStatus.OK.value())
+                                .message("Top stock products retrieved successfully")
+                                .data(products)
                                 .build()));
     }
 

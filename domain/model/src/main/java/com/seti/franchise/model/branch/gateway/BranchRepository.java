@@ -10,4 +10,5 @@ public interface BranchRepository {
     Mono<Branch> findById(String id);
     Mono<Branch> updateName(String id, String newName);
     Mono<Branch> findByName(String name);
+    Flux<Branch> findByFranchiseId(String franchiseId);
 }

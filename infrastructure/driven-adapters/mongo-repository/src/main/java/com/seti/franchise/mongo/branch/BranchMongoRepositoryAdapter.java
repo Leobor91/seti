@@ -35,6 +35,12 @@ public class BranchMongoRepositoryAdapter extends AdapterOperations<Branch, Bran
     }
 
     @Override
+    public Flux<Branch> findByFranchiseId(String franchiseId) {
+        return this.repository.findByFranchiseId(franchiseId)
+                .map(this::toEntity);
+    }
+
+    @Override
     public Mono<Branch> save(Branch branch) {
         return this.repository.save(toData(branch))
                 .map(this::toEntity);

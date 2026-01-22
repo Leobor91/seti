@@ -12,4 +12,5 @@ public interface ProductRepository {
     Mono<Void> deleteById(String id);
     Mono<Product> findByName(String name);
     Mono<Product> findByNameAndBranchId(String name, String branchId);
+    Mono<Product> findFirstByBranchIdOrderByStockDesc(String branchId);
 }

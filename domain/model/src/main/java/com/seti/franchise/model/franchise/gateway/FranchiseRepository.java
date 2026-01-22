@@ -1,7 +1,6 @@
 package com.seti.franchise.model.franchise.gateway;
 
 import com.seti.franchise.model.franchise.Franchise;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface FranchiseRepository {
