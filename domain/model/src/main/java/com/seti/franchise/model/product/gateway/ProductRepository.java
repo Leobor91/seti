@@ -11,4 +11,5 @@ public interface ProductRepository {
     Mono<Product> updateName(String id, String newName);
     Mono<Void> deleteById(String id);
     Mono<Product> findByName(String name);
+    Mono<Product> findByNameAndBranchId(String name, String branchId);
 }

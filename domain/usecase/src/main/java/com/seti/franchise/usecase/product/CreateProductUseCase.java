@@ -27,12 +27,12 @@ public class CreateProductUseCase {
                 ))
                 .flatMap(isValid -> validate(stock))
                 .filter(isValid -> isValid)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Stock cannot be null or empty, and must be a value greater than or equal to zero.")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("stock cannot be null or empty, and must be a value greater than or equal to zero.")))
                 .flatMap(valid -> branchRepository.findById(branchId))
                 .switchIfEmpty(Mono.error(
                         new NotFoundException("Branch not found with ID: " + branchId)
                 ))
-                .flatMap(branch -> productRepository.findByName(productName))
+                .flatMap(branch -> productRepository.findByNameAndBranchId(productName, branchId))
                 .flatMap(existingProduct -> Mono.<Product>error(
                         new IllegalArgumentException("Product with name '" + productName + "' already exists.")
                 ))
@@ -41,6 +41,7 @@ public class CreateProductUseCase {
                                 .id(UUID.randomUUID().toString())
                                 .name(productName)
                                 .branchId(branchId)
+                                .stock(stock)
                                 .build()
                 )));
 
@@ -54,7 +55,7 @@ public class CreateProductUseCase {
     }
 
     private Mono<Boolean> validate(Long newStock) {
-        boolean isvalid = Objects.nonNull(newStock) && !newStock.toString().isBlank() && !(newStock >= 0);
+        boolean isvalid = Objects.nonNull(newStock) && !newStock.toString().isBlank() && (newStock >= 0);
         log.info("Stock validation result: "  + isvalid);
         return Mono.just(isvalid);
     }

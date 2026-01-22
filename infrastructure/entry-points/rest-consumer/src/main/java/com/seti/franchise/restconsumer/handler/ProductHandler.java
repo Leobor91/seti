@@ -50,7 +50,7 @@ public class ProductHandler {
     @PutMapping(path = "/update-name")
     public Mono<ResponseEntity<ApiResponseDto>> updateNameProduct(@Valid @RequestBody ProductRequest requestBody){
         log.info("Request to update product name received: {}", requestBody);
-        return updateProductNameUseCase.execute(requestBody.getId(), requestBody.getName())
+        return updateProductNameUseCase.execute(requestBody.getId(), requestBody.getName(), requestBody.getBranchId())
                 .doOnNext(product -> log.info("Product updated: {}", product))
                 .map(product -> ResponseEntity
                         .status(HttpStatus.OK)
