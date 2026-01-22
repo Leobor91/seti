@@ -43,6 +43,12 @@ public class productMongoRepositoryAdapter extends AdapterOperations<Product, Pr
     }
 
     @Override
+    public Mono<Product> findByNameAndBranchId(String name, String branchId) {
+        return this.repository.findByNameAndBranchId(name, branchId)
+                .map(this::toEntity);
+    }
+
+    @Override
     public Mono<Product> save(Product product) {
         return this.repository.save(toData(product))
                 .map(this::toEntity);
@@ -52,7 +58,9 @@ public class productMongoRepositoryAdapter extends AdapterOperations<Product, Pr
     protected ProductDocument toData(Product model) {
         return ProductDocument.builder()
                 .id(model.getId())
+                .branchId(model.getBranchId())
                 .name(model.getName())
+                .stock(model.getStock())
                 .build();
     }
 
@@ -60,7 +68,9 @@ public class productMongoRepositoryAdapter extends AdapterOperations<Product, Pr
     protected Product toEntity(ProductDocument document) {
         return Product.builder()
                 .id(document.getId())
+                .branchId(document.getBranchId())
                 .name(document.getName())
+                .stock(document.getStock())
                 .build();
     }
 }

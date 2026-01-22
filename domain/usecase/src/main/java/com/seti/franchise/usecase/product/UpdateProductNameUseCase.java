@@ -16,12 +16,12 @@ public class UpdateProductNameUseCase {
 
     private final ProductRepository productRepository;
 
-    public Mono<Product> execute(String productId, String newName) {
+    public Mono<Product> execute(String productId, String newName, String branchId) {
         log.info("Starting update process for product ID: " + productId + " with new name: " + newName);
-        return validate(newName, productId)
+        return validate(newName, productId, branchId)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("The 'name' and 'id' fields are required and must not be blank.")))
-                .flatMap(valid -> productRepository.findByName(newName))
+                .flatMap(valid -> productRepository.findByNameAndBranchId(newName, branchId))
                 .flatMap(existingProduct -> existingProduct.getId().equalsIgnoreCase(productId)
                         ? Mono.error(new IllegalArgumentException("The new name already belongs to the current product."))
                         : Mono.error(new DuplicateValueException("A product with the name '" + newName + "' already exists.")))
@@ -36,9 +36,10 @@ public class UpdateProductNameUseCase {
 
     }
 
-    private Mono<Boolean> validate(String productName, String productId) {
+    private Mono<Boolean> validate(String productName, String productId, String branchId) {
         boolean isValid = Objects.nonNull(productName) && !productName.isBlank() &&
-                Objects.nonNull(productId) && !productId.isBlank();
+                Objects.nonNull(productId) && !productId.isBlank() &&
+                Objects.nonNull(branchId) && !branchId.isBlank();
         log.info("Validation result  '" + isValid);
         return Mono.just(isValid);
     }
