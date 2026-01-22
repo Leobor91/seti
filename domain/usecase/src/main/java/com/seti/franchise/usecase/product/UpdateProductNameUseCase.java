@@ -20,7 +20,7 @@ public class UpdateProductNameUseCase {
         log.info("Starting update process for product ID: " + productId + " with new name: " + newName);
         return validate(newName, productId)
                 .filter(isValid -> isValid)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product ID and name must not be null or empty.")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("The 'name' and 'id' fields are required and must not be blank.")))
                 .flatMap(valid -> productRepository.findByName(newName))
                 .flatMap(existingProduct -> existingProduct.getId().equalsIgnoreCase(productId)
                         ? Mono.error(new IllegalArgumentException("The new name already belongs to the current product."))

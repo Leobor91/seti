@@ -44,6 +44,7 @@ public class BranchMongoRepositoryAdapter extends AdapterOperations<Branch, Bran
     protected BranchDocument toData(Branch model) {
         return BranchDocument.builder()
                 .id(model.getId())
+                .franchiseId(model.getFranchiseId())
                 .name(model.getName())
                 .build();
     }
@@ -52,6 +53,7 @@ public class BranchMongoRepositoryAdapter extends AdapterOperations<Branch, Bran
     protected Branch toEntity(BranchDocument document) {
         return Branch.builder()
                 .id(document.getId())
+                .franchiseId(document.getFranchiseId())
                 .name(document.getName())
                 .build();
     }

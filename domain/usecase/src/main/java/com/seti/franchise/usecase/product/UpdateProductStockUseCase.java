@@ -22,7 +22,7 @@ public class UpdateProductStockUseCase {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product ID and new stock must be provided and valid.")))
                 .flatMap(valid -> validate(newStock))
                 .filter(isValidStock -> !isValidStock)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Stock must be a non-negative value.")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Stock cannot be null or empty, and must be a value greater than or equal to zero.")))
                 .flatMap(validStock -> productRepository.findById(productId))
                 .switchIfEmpty(Mono.error(new NotFoundException("Product not found with ID:" + productId)))
                 .flatMap(product -> productRepository.updateStock(productId, newStock))

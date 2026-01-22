@@ -15,11 +15,11 @@ public class DeleteProductUseCase {
 
     private final ProductRepository productRepository;
 
-    private Mono<Void> execute(String productId){
+    public Mono<Void> execute(String productId){
         log.info("Deleting product '" + productId + "'");
         return validate(productId)
                 .filter(isvalid -> isvalid)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product ID must not be null or empty.")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("The  'id' field are required and must not be blank.")))
                 .flatMap(isValid -> productRepository.findById(productId))
                 .switchIfEmpty(Mono.error( new NotFoundException("Product not found with ID: " + productId)))
                 .flatMap(product -> productRepository.deleteById(product.getId()))
