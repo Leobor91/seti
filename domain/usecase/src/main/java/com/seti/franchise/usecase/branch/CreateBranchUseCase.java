@@ -23,7 +23,7 @@ public class CreateBranchUseCase {
         return validate(branchName, franchiseId)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(
-                        new IllegalArgumentException("Branch name and Franchise ID must be provided and non-blank.")
+                        new IllegalArgumentException("The 'name' (Branch Name) and 'franchiseId' fields are required and must not")
                 ))
                 .flatMap(valid -> franchiseRepository.findById(franchiseId))
                 .switchIfEmpty(Mono.error(

@@ -21,7 +21,7 @@ public class UpdateFranchiseNameUseCase {
         return validate(newName, franchiseId)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(
-                        new IllegalArgumentException("Franchise name and ID must be provided and non-blank.")
+                        new IllegalArgumentException("Both 'name' and 'id' fields are required and must not be empty")
                 ))
                 .flatMap(isValid -> franchiseRepository.findByName(newName))
                 .flatMap(existingFranchise -> existingFranchise.getId().equalsIgnoreCase(franchiseId)

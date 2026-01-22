@@ -20,7 +20,7 @@ public class UpdateBranchNameUseCase {
         log.info("Starting update process for branch: " + branchId + " with new name: " + newName);
         return validate(branchId, newName)
                 .filter(isValid -> isValid)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Branch ID and new name must be provided and non-blank.")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("The 'name' (Branch Name) and 'id;' fields are required and must not")))
                 .flatMap(isValid -> branchRepository.findByName(newName))
                 .flatMap(existingBranch -> existingBranch.getId().equalsIgnoreCase(branchId)
                         ? Mono.error(new IllegalArgumentException("The new name already belongs to the current branch "))
