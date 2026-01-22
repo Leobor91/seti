@@ -5,6 +5,7 @@ import com.seti.franchise.model.franchise.Franchise;
 import com.seti.franchise.restconsumer.dto.request.FranchiseRequest;
 import com.seti.franchise.restconsumer.dto.response.ApiResponseDto;
 import com.seti.franchise.usecase.franchise.CreateFranchiseUseCase;
+import com.seti.franchise.usecase.franchise.UpdateFranchiseNameUseCase;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +32,32 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 public class FranchiseHandler {
 
     private final CreateFranchiseUseCase createFranchiseUseCase;
+    private final UpdateFranchiseNameUseCase updateFranchiseNameUseCase;
 
     @PostMapping(path = "/create")
-    public Mono<ResponseEntity<ApiResponseDto>> create(@Valid @RequestBody FranchiseRequest requestBody) {
+    public Mono<ResponseEntity<ApiResponseDto>> createFranchise(@Valid @RequestBody FranchiseRequest requestBody) {
         log.info("Request body = {}", requestBody);
         return createFranchiseUseCase.execute(requestBody.getName())
                 .doOnNext(franchise -> log.info("Franchise created: {}", franchise))
                 .map(franchise ->  ResponseEntity
                         .status(HttpStatus.CREATED)
                         .body(ApiResponseDto.builder()
-                                .status(201)
+                                .status(HttpStatus.CREATED.value())
                                 .message("Franchise created successfully")
+                                .data(franchise)
+                                .build()));
+    }
+
+    @PutMapping(path = "/update")
+    public Mono<ResponseEntity<ApiResponseDto>> updateFranchise(@Valid @RequestBody FranchiseRequest requestBody) {
+        log.info("Request to update franchise: {}", requestBody);
+        return updateFranchiseNameUseCase.execute(requestBody.getId() ,requestBody.getName())
+                .doOnNext(franchise -> log.info("Franchise updated: {}", franchise))
+                .map(franchise ->  ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(ApiResponseDto.builder()
+                                .status(HttpStatus.OK.value())
+                                .message("Franchise updated successfully")
                                 .data(franchise)
                                 .build()));
     }

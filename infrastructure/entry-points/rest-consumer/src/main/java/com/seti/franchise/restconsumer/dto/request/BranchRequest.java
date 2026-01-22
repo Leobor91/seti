@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FranchiseRequest {
+public class BranchRequest {
 
     private String Id;
     private String name;
-
+    private String franchiseId;
 }

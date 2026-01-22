@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 
 public interface BranchMongoDBRepository extends ReactiveMongoRepository<BranchDocument, String>, ReactiveQueryByExampleExecutor<BranchDocument> {
 
-    Flux<BranchDocument> findByFranchiseId(String franchiseId);
+    Mono<BranchDocument> findByName(String name);
 }
