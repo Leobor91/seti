@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FranchiseRequest {
 
+    private String Id;
     private String name;
+
 }

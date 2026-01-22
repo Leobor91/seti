@@ -1,6 +1,6 @@
 package com.seti.franchise.usecase.franchise;
 
-import com.seti.franchise.model.excepcion.FranchiseAlreadyExistsException;
+import com.seti.franchise.model.excepcion.DuplicateValueException;
 import com.seti.franchise.model.franchise.Franchise;
 import com.seti.franchise.model.franchise.gateway.FranchiseRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,13 @@ public class CreateFranchiseUseCase {
 
     public Mono<Franchise> execute(String franchiseName) {
         return validate(franchiseName)
-                .flatMap(franchiseRepository::findByName)
+                .filter(isValid -> isValid)
+                .switchIfEmpty(Mono.error(
+                        new IllegalArgumentException("Franchise name and ID must be provided and non-blank.")
+                ))
+                .flatMap(isValid -> franchiseRepository.findByName(franchiseName))
                 .flatMap(existing -> Mono.<Franchise>error(
-                        new FranchiseAlreadyExistsException("Franchise with name '" + franchiseName + "' already exists.")
+                        new DuplicateValueException("Franchise with name '" + franchiseName + "' already exists.")
                 ))
                 .switchIfEmpty(Mono.defer(() -> {
                     Franchise franchise = Franchise.builder()
@@ -32,9 +36,8 @@ public class CreateFranchiseUseCase {
                 .doOnSuccess(saved -> log.info("Franchise created with ID: " + saved.getName()));
     }
 
-    private Mono<String> validate(String franchiseName) {
-        return Objects.nonNull(franchiseName) && !franchiseName.isBlank() ?
-                Mono.just(franchiseName) :
-                Mono.error(new IllegalArgumentException("Franchise name cannot be null or empty"));
+    private Mono<Boolean> validate(String franchiseName) {
+        boolean isValid = Objects.nonNull(franchiseName) && !franchiseName.isBlank();
+        return Mono.just(isValid);
     }
 }
