@@ -21,7 +21,7 @@ public class CreateFranchiseUseCase {
         return validate(franchiseName)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(
-                        new IllegalArgumentException("Franchise name and ID must be provided and non-blank.")
+                        new IllegalArgumentException("The 'name' field is required and must not be blank.")
                 ))
                 .flatMap(isValid -> franchiseRepository.findByName(franchiseName))
                 .flatMap(existing -> Mono.<Franchise>error(

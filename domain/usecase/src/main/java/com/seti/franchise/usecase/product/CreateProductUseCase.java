@@ -23,11 +23,11 @@ public class CreateProductUseCase {
         return validate(productName, branchId)
                 .filter(isValid -> isValid)
                 .switchIfEmpty(Mono.error(
-                        new IllegalArgumentException("Product name and branch ID must be provided and non-blank.")
+                        new IllegalArgumentException("The 'name' and 'brachId' fields are required and must not be blank.")
                 ))
                 .flatMap(isValid -> validate(stock))
                 .filter(isValid -> isValid)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Stock must be a non-negative value.")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Stock cannot be null or empty, and must be a value greater than or equal to zero.")))
                 .flatMap(valid -> branchRepository.findById(branchId))
                 .switchIfEmpty(Mono.error(
                         new NotFoundException("Branch not found with ID: " + branchId)
