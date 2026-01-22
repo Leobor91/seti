@@ -8,5 +8,6 @@ public interface ProductMongoDBRepository extends ReactiveMongoRepository<Produc
 
     Mono<ProductDocument> findByName(String name);
     Mono<ProductDocument> findByNameAndBranchId(String name, String branchId);
+    Mono<ProductDocument> findFirstByBranchIdOrderByStockDesc(String branchId);
 
 }

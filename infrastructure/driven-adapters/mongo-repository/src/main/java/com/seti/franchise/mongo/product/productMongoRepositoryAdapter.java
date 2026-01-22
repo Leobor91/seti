@@ -49,6 +49,12 @@ public class productMongoRepositoryAdapter extends AdapterOperations<Product, Pr
     }
 
     @Override
+    public Mono<Product> findFirstByBranchIdOrderByStockDesc(String branchId) {
+        return this.repository.findFirstByBranchIdOrderByStockDesc(branchId)
+                .map(this::toEntity);
+    }
+
+    @Override
     public Mono<Product> save(Product product) {
         return this.repository.save(toData(product))
                 .map(this::toEntity);
