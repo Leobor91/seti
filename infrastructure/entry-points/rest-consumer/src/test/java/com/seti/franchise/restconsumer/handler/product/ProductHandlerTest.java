@@ -55,7 +55,7 @@ class ProductHandlerTest {
                 "stock",5
         );
 
-        webTestClient.post().uri("/api/v1/products/create")
+        webTestClient.post().uri("/api/v1/products")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isCreated()
@@ -76,13 +76,13 @@ class ProductHandlerTest {
                 "branchId","b2"
         );
 
-        webTestClient.put().uri("/api/v1/products/update-name")
+        webTestClient.put().uri("/api/v1/products/update-name/{id}", "p2")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.status").isEqualTo(200)
-                .jsonPath("$.message").isEqualTo("Name Product updated successfully")
+                .jsonPath("$.message").isEqualTo("Product updated successfully")
                 .jsonPath("$.data.name").isEqualTo("NewName");
     }
 
@@ -96,7 +96,7 @@ class ProductHandlerTest {
                 "stock",10
         );
 
-        webTestClient.put().uri("/api/v1/products/update-stock")
+        webTestClient.put().uri("/api/v1/products/update-stock/{id}", "p3")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isOk()
@@ -111,7 +111,7 @@ class ProductHandlerTest {
         Product product = Product.builder().id("p4").name("Deleted").branchId("b4").stock(0L).build();
         when(deleteProductUseCase.execute(eq("p4"))).thenReturn(Mono.just(product));
 
-        webTestClient.delete().uri(uriBuilder -> uriBuilder.path("/api/v1/products/delete").queryParam("productId","p4").build())
+        webTestClient.delete().uri("/api/v1/products/{id}", "p4")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()

@@ -29,14 +29,20 @@ public class BranchMongoRepositoryAdapter extends AdapterOperations<Branch, Bran
     }
 
     @Override
-    public Mono<Branch> findByName(String name) {
-        return this.repository.findByName(name)
+    public Mono<Branch> findByNameAndFranchiseId(String name, String franchiseId) {
+        return this.repository.findByNameAndFranchiseId(name, franchiseId)
                 .map(this::toEntity);
     }
 
     @Override
     public Flux<Branch> findByFranchiseId(String franchiseId) {
         return this.repository.findByFranchiseId(franchiseId)
+                .map(this::toEntity);
+    }
+
+    @Override
+    public Mono<Branch> findByName(String name) {
+        return this.repository.findByName(name)
                 .map(this::toEntity);
     }
 

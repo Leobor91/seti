@@ -43,7 +43,7 @@ public class BranchHandler {
     }
 
     @PutMapping(path = "/{id}")
-    public Mono<ResponseEntity<ApiResponseDto>> updateBranch(@PathVariable String id, @Valid @RequestBody BranchRequest requestBody){
+    public Mono<ResponseEntity<ApiResponseDto>> updateBranch(@PathVariable("id") String id, @Valid @RequestBody BranchRequest requestBody){
         log.info("Request to update branch: {}", requestBody);
         return updateBranchNameUseCase.execute(id, requestBody.getName())
                 .doOnNext(branch -> log.info("Branch updated: {}", branch))

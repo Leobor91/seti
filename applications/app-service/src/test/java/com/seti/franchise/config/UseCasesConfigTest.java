@@ -107,6 +107,11 @@ class UseCasesConfigTest {
                 public reactor.core.publisher.Flux<com.seti.franchise.model.branch.Branch> findByFranchiseId(String franchiseId) {
                     return reactor.core.publisher.Flux.empty();
                 }
+
+                @Override
+                public reactor.core.publisher.Mono<com.seti.franchise.model.branch.Branch> findByNameAndFranchiseId(String name, String franchiseId) {
+                    return reactor.core.publisher.Mono.empty();
+                }
             };
         }
 

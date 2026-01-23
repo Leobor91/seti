@@ -38,7 +38,7 @@ class FranchiseHandlerTest {
                 "name","Franchise 1"
         );
 
-        webTestClient.post().uri("/api/v1/franchises/create")
+        webTestClient.post().uri("/api/v1/franchises")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isCreated()
@@ -58,7 +58,7 @@ class FranchiseHandlerTest {
                 "name","NewName"
         );
 
-        webTestClient.put().uri("/api/v1/franchises/update")
+        webTestClient.put().uri("/api/v1/franchises/{id}", "fr2")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isOk()

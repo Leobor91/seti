@@ -24,6 +24,7 @@ class CreateBranchUseCaseTest {
     void setUp() {
         branchRepository = mock(BranchRepository.class);
         franchiseRepository = mock(FranchiseRepository.class);
+        when(branchRepository.findByNameAndFranchiseId(any(), any())).thenReturn(Mono.empty());
         useCase = new CreateBranchUseCase(branchRepository, franchiseRepository);
     }
 
@@ -46,7 +47,7 @@ class CreateBranchUseCaseTest {
     @Test
     void execute_fails_on_duplicate_branch() {
         when(franchiseRepository.findById("f1")).thenReturn(Mono.just(Franchise.builder().id("f1").name("F").build()));
-        when(branchRepository.findByName("B1")).thenReturn(Mono.just(Branch.builder().id("b1").name("B1").franchiseId("f1").build()));
+        when(branchRepository.findByNameAndFranchiseId("B1", "f1")).thenReturn(Mono.just(Branch.builder().id("b1").name("B1").franchiseId("f1").build()));
 
         StepVerifier.create(useCase.execute("f1", "B1"))
                 .expectErrorMatches(err -> err instanceof DuplicateValueException)
@@ -56,7 +57,7 @@ class CreateBranchUseCaseTest {
     @Test
     void execute_saves_branch_when_ok() {
         when(franchiseRepository.findById("f1")).thenReturn(Mono.just(Franchise.builder().id("f1").name("F").build()));
-        when(branchRepository.findByName("B2")).thenReturn(Mono.empty());
+        when(branchRepository.findByNameAndFranchiseId("B2", "f1")).thenReturn(Mono.empty());
         when(branchRepository.save(any(Branch.class))).thenAnswer(inv -> Mono.just(inv.getArgument(0)));
 
         StepVerifier.create(useCase.execute("f1", "B2"))

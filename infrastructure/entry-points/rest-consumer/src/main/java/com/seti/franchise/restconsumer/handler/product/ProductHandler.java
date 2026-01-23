@@ -22,10 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -55,7 +53,7 @@ public class ProductHandler {
     }
 
     @PutMapping(path = "/update-name/{id}")
-    public Mono<ResponseEntity<ApiResponseDto>> updateProduct(@PathVariable String id, @Valid @RequestBody ProductRequest requestBody) {
+    public Mono<ResponseEntity<ApiResponseDto>> updateProduct(@PathVariable("id")  String id, @Valid @RequestBody ProductRequest requestBody) {
         log.info("Request to update product received: {}", requestBody);
         return updateProductNameUseCase.execute(id, requestBody.getName(), requestBody.getBranchId())
                 .doOnNext(product -> log.info("Product updated: {}", product))
@@ -69,7 +67,7 @@ public class ProductHandler {
     }
 
     @PutMapping(path = "/update-stock/{id}")
-    public Mono<ResponseEntity<ApiResponseDto>> updateStockProduct(@Valid @PathVariable String id, @RequestBody ProductRequest requestBody){
+    public Mono<ResponseEntity<ApiResponseDto>> updateStockProduct(@Valid @PathVariable("id")  String id, @RequestBody ProductRequest requestBody){
         log.info("Request to update product stock received: {}", requestBody);
         return updateProductStockUseCase.execute(id, requestBody.getStock())
                 .doOnNext(product -> log.info("Product stock updated: {}", product))
@@ -83,7 +81,7 @@ public class ProductHandler {
     }
 
     @DeleteMapping(path = "/{id}")
-    public Mono<ResponseEntity<ApiResponseDto>> deleteProduct(@PathVariable String id) {
+    public Mono<ResponseEntity<ApiResponseDto>> deleteProduct(@PathVariable("id")  String id) {
         log.info("Request to delete product received: {}", id);
         return deleteProductUseCase.execute(id)
                 .doOnSuccess(productDelete -> log.info("Product deleted with id: {}", id))
