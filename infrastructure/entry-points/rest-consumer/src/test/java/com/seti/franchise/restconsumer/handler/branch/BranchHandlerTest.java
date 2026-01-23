@@ -39,7 +39,7 @@ class BranchHandlerTest {
                 "franchiseId","f1"
         );
 
-        webTestClient.post().uri("/api/v1/branches/create")
+        webTestClient.post().uri("/api/v1/branches")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isCreated()
@@ -59,7 +59,7 @@ class BranchHandlerTest {
                 "name","Updated"
         );
 
-        webTestClient.put().uri("/api/v1/branches/update")
+        webTestClient.put().uri("/api/v1/branches/{id}", "br2")
                 .bodyValue(request)
                 .exchange()
                 .expectStatus().isOk()

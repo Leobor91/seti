@@ -29,9 +29,9 @@ public class CreateBranchUseCase {
                 .switchIfEmpty(Mono.error(
                         new NoClassDefFoundError("Franchise not found with ID: " + franchiseId)
                 ))
-                .flatMap(franchise -> branchRepository.findByName(branchName)
+                .flatMap(franchise -> branchRepository.findByNameAndFranchiseId(branchName, franchiseId)
                         .flatMap(existingBranch -> Mono.<Branch>error(
-                                new DuplicateValueException("Branch with name '" + branchName + "' already exists.")
+                                new DuplicateValueException("Branch with name '" + branchName + "' already exists in this franchise.")
                         ))
                         .switchIfEmpty(Mono.defer(() -> branchRepository.save(
                                 Branch.builder()

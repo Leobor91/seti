@@ -1,7 +1,6 @@
 package com.seti.franchise.restconsumer.handler.franchise;
 
 
-import com.seti.franchise.model.franchise.Franchise;
 import com.seti.franchise.restconsumer.dto.request.FranchiseRequest;
 import com.seti.franchise.restconsumer.dto.response.ApiResponseDto;
 import com.seti.franchise.usecase.franchise.CreateFranchiseUseCase;
@@ -11,18 +10,17 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import org.yaml.snakeyaml.constructor.DuplicateKeyException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 
-import java.net.URI;
-import java.util.Map;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @AllArgsConstructor
 @RestController
@@ -49,7 +47,7 @@ public class FranchiseHandler {
     }
 
     @PutMapping(path = "/{id}")
-    public Mono<ResponseEntity<ApiResponseDto>> updateFranchise(@PathVariable String id, @Valid @RequestBody FranchiseRequest requestBody) {
+    public Mono<ResponseEntity<ApiResponseDto>> updateFranchise(@PathVariable("id")  String id, @Valid @RequestBody FranchiseRequest requestBody) {
         log.info("Request to update franchise: {}", requestBody);
         return updateFranchiseNameUseCase.execute(id, requestBody.getName())
                 .doOnNext(franchise -> log.info("Franchise updated: {}", franchise))
