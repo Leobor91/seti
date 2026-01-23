@@ -14,6 +14,38 @@ plugins {
     id 'jacoco'
 }
 
+subprojects {
+    apply plugin: 'jacoco'
+}
+
+task jacocoRootReport(type: JacocoReport) {
+    // Ejecuta los tests de todos los subproyectos antes de generar el reporte
+    dependsOn subprojects.collect { it.tasks.matching { t -> t.name == 'test' } }
+
+    def classDirs = files(subprojects.collect { project ->
+        def dir = file("${project.buildDir}/classes/java/main")
+        dir.exists() ? fileTree(dir: dir, excludes: ['**/Q*']) : []
+    })
+    def srcDirs = files(subprojects.collect { project ->
+        def src = file("${project.projectDir}/src/main/java")
+        src.exists() ? src : []
+    })
+    def execFiles = files(subprojects.collect { project ->
+        def exec = file("${project.buildDir}/jacoco/test.exec")
+        exec.exists() ? exec : []
+    })
+
+    additionalSourceDirs.from = srcDirs
+    sourceDirectories.from = srcDirs
+    classDirectories.from = classDirs
+    executionData.from = execFiles
+
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}
+
 repositories {
     mavenCentral()
     // Puedes agregar otros repositorios si es necesario

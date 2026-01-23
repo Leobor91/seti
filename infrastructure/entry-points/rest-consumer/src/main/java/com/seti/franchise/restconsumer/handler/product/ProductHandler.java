@@ -15,13 +15,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -36,7 +40,7 @@ public class ProductHandler {
     private final DeleteProductUseCase deleteProductUseCase;
     private final GetTopStockByFranchiseUseCase getTopStockByFranchiseUseCase;
 
-    @PostMapping(path = "/create")
+    @PostMapping
     public Mono<ResponseEntity<ApiResponseDto>> createProduct(@Valid @RequestBody ProductRequest requestBody) {
         log.info("Request to create product received: {}", requestBody);
         return createProductUseCase.execute(requestBody.getBranchId(), requestBody.getName(), requestBody.getStock())
@@ -50,24 +54,24 @@ public class ProductHandler {
                                 .build()));
     }
 
-    @PutMapping(path = "/update-name")
-    public Mono<ResponseEntity<ApiResponseDto>> updateNameProduct(@Valid @RequestBody ProductRequest requestBody){
-        log.info("Request to update product name received: {}", requestBody);
-        return updateProductNameUseCase.execute(requestBody.getId(), requestBody.getName(), requestBody.getBranchId())
+    @PutMapping(path = "/update-name/{id}")
+    public Mono<ResponseEntity<ApiResponseDto>> updateProduct(@PathVariable String id, @Valid @RequestBody ProductRequest requestBody) {
+        log.info("Request to update product received: {}", requestBody);
+        return updateProductNameUseCase.execute(id, requestBody.getName(), requestBody.getBranchId())
                 .doOnNext(product -> log.info("Product updated: {}", product))
                 .map(product -> ResponseEntity
                         .status(HttpStatus.OK)
                         .body(ApiResponseDto.builder()
                                 .status(HttpStatus.OK.value())
-                                .message("Name Product updated successfully")
+                                .message("Product updated successfully")
                                 .data(product)
                                 .build()));
     }
 
-    @PutMapping(path = "/update-stock")
-    public Mono<ResponseEntity<ApiResponseDto>> updateStockProduct(@Valid @RequestBody ProductRequest requestBody){
+    @PutMapping(path = "/update-stock/{id}")
+    public Mono<ResponseEntity<ApiResponseDto>> updateStockProduct(@Valid @PathVariable String id, @RequestBody ProductRequest requestBody){
         log.info("Request to update product stock received: {}", requestBody);
-        return updateProductStockUseCase.execute(requestBody.getId(), requestBody.getStock())
+        return updateProductStockUseCase.execute(id, requestBody.getStock())
                 .doOnNext(product -> log.info("Product stock updated: {}", product))
                 .map(product -> ResponseEntity
                         .status(HttpStatus.OK)
@@ -78,11 +82,11 @@ public class ProductHandler {
                                 .build()));
     }
 
-    @DeleteMapping(path = "/delete")
-    public Mono<ResponseEntity<ApiResponseDto>> deleteProduct(@RequestParam("productId") String productId) {
-        log.info("Request to delete product received: {}", productId);
-        return deleteProductUseCase.execute(productId)
-                .doOnSuccess(productDelete -> log.info("Product deleted with id: {}", productId))
+    @DeleteMapping(path = "/{id}")
+    public Mono<ResponseEntity<ApiResponseDto>> deleteProduct(@PathVariable String id) {
+        log.info("Request to delete product received: {}", id);
+        return deleteProductUseCase.execute(id)
+                .doOnSuccess(productDelete -> log.info("Product deleted with id: {}", id))
                 .map(productDelete -> ResponseEntity
                         .status(HttpStatus.OK)
                         .body(ApiResponseDto.builder()
@@ -93,7 +97,7 @@ public class ProductHandler {
     }
 
     @GetMapping(path = "/top-stock-products")
-    public Mono<ResponseEntity<ApiResponseDto>> getTopStockProducts(@RequestParam("franchiseId") String franchiseId)  {
+    public Mono<ResponseEntity<ApiResponseDto>> getTopStockProducts(@RequestParam("franchiseId") String franchiseId) {
         log.info("Request to get top stock products received");
         return getTopStockByFranchiseUseCase.execute(franchiseId)
                 .collectList()

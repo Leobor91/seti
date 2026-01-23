@@ -34,7 +34,7 @@ public class FranchiseHandler {
     private final CreateFranchiseUseCase createFranchiseUseCase;
     private final UpdateFranchiseNameUseCase updateFranchiseNameUseCase;
 
-    @PostMapping(path = "/create")
+    @PostMapping
     public Mono<ResponseEntity<ApiResponseDto>> createFranchise(@Valid @RequestBody FranchiseRequest requestBody) {
         log.info("Request body = {}", requestBody);
         return createFranchiseUseCase.execute(requestBody.getName())
@@ -48,10 +48,10 @@ public class FranchiseHandler {
                                 .build()));
     }
 
-    @PutMapping(path = "/update")
-    public Mono<ResponseEntity<ApiResponseDto>> updateFranchise(@Valid @RequestBody FranchiseRequest requestBody) {
+    @PutMapping(path = "/{id}")
+    public Mono<ResponseEntity<ApiResponseDto>> updateFranchise(@PathVariable String id, @Valid @RequestBody FranchiseRequest requestBody) {
         log.info("Request to update franchise: {}", requestBody);
-        return updateFranchiseNameUseCase.execute(requestBody.getId() ,requestBody.getName())
+        return updateFranchiseNameUseCase.execute(id, requestBody.getName())
                 .doOnNext(franchise -> log.info("Franchise updated: {}", franchise))
                 .map(franchise ->  ResponseEntity
                         .status(HttpStatus.OK)
