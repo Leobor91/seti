@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: franchise-app
+  labels:
+    app: franchise-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: franchise-app
+  template:
+    metadata:
+      labels:
+        app: franchise-app
+    spec:
+      containers:
+        - name: franchise-app
+          image: your-registry/franchise-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATA_MONGODB_URI
+              value: "mongodb://mongo:27017/franchise"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: franchise-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: franchise-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
