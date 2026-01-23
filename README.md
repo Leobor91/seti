@@ -106,7 +106,20 @@ Este m�dulo es el m�s externo de la arquitectura, es el encargado de ensambl
 ## API — Endpoints principales
 
 A continuación se muestran los endpoints públicos y ejemplos `curl` para los handlers principales del proyecto.
+## 🗄️ Estado Inicial de la Base de Datos (Seed Data)
 
+Para facilitar las pruebas de integración y la validación de los endpoints, la base de datos se entrega **pre-poblada**. Esto permite que los evaluadores puedan realizar consultas y operaciones sin necesidad de configurar datos desde cero.
+
+### 📊 Estructura de Datos Existente
+La base de datos cuenta con una jerarquía completa distribuida de la siguiente manera:
+
+* **10 Franquicias:** Empresas principales como *TechNova*, *GlobalFood*, *UrbanBrew*, etc.
+* **100 Sucursales:** Cada franquicia cuenta con 10 sucursales distribuidas uniformemente.
+* **1,000 Productos:** Cada sucursal tiene asignados 10 productos con nombres únicos y stock aleatorio.
+
+## 🧪 Guía de Pruebas Rápidas (Quick Start for Testing)
+
+---
 ProductHandler
 - Crear producto
 ```
